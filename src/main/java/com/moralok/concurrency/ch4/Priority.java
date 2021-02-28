@@ -1,4 +1,4 @@
-package com.moralok.ch4;
+package com.moralok.concurrency.ch4;
 
 import java.util.ArrayList;
 import java.util.List;

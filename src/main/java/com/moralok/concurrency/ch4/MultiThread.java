@@ -1,4 +1,4 @@
-package com.moralok.ch4;
+package com.moralok.concurrency.ch4;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;

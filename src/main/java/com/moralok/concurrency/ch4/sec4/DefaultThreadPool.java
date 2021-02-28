@@ -1,4 +1,6 @@
-package com.moralok.ch4.sec3;
+package com.moralok.concurrency.ch4.sec4;
+
+import com.moralok.concurrency.ch4.sec3.ThreadPool;
 
 import java.util.ArrayList;
 import java.util.Collections;

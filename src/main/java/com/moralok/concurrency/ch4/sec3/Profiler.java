@@ -1,4 +1,4 @@
-package com.moralok.ch4.sec3;
+package com.moralok.concurrency.ch4.sec3;
 
 import java.util.concurrent.TimeUnit;
 
