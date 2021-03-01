@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author moralok
  * @since 2021/3/1 5:01 下午
  */
-public class LockTest {
+public class LockUse {
 
     private static Lock lock = new ReentrantLock();
     private static CountDownLatch start = new CountDownLatch(1);
