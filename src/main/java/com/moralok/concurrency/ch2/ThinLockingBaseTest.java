@@ -7,18 +7,21 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class BiasedLockingTest {
+public class ThinLockingBaseTest {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        TimeUnit.SECONDS.sleep(4);
+        log.info("轻量级锁基础测试：无锁状态 -> 轻量级锁");
+
         Object lock = new Object();
-        // biasable，可偏向的
+        log.info("在偏向锁激活之前创建的对象为 =====> 无锁状态（可偏向额）");
         log.info(ClassLayout.parseInstance(lock).toPrintable());
+
         synchronized (lock) {
-            // biased，偏向锁状态
+            log.info("即使是单线程无竞争获取锁，=====> 轻量级锁");
             log.info(ClassLayout.parseInstance(lock).toPrintable());
         }
-        // 暂停可以使用 jstack 查看 main 线程 tid 和打印的结果进行对比
-        System.in.read();
+
+        log.info("离开同步块后，-> 无锁状态（可偏向的）");
+        log.info(ClassLayout.parseInstance(lock).toPrintable());
     }
 }
