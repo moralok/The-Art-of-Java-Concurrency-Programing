@@ -3,14 +3,13 @@ package com.moralok.concurrency.ch2;
 import lombok.extern.slf4j.Slf4j;
 import org.openjdk.jol.info.ClassLayout;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class BiasedLockingWhenPreviousBiasedThreadAliveTest {
+public class ThinLockingFromBiasedLockingTest {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        log.info("测试：之前获得偏向锁的线程存活时，新线程获得的是轻量级锁");
+    public static void main(String[] args) throws InterruptedException {
+        log.info("测试：当持有偏向锁的线程已经离开同步块，其他线程尝试获取偏向锁时，将获得轻量级锁");
 
         log.info("sleep 4000ms，等待偏向锁激活");
         TimeUnit.SECONDS.sleep(4);
@@ -22,22 +21,14 @@ public class BiasedLockingWhenPreviousBiasedThreadAliveTest {
         synchronized (lock) {
             log.info("第一个线程 {} 获取锁 =====> 偏向锁", Thread.currentThread().getName());
             log.info(ClassLayout.parseInstance(lock).toPrintable());
-
-            log.info("暂停 10s，可以使用 jstack 查看线程 tid 和 Mark Word 进行对比");
-            TimeUnit.SECONDS.sleep(10);
         }
 
         Thread thread = new Thread(() -> {
+            log.info("第二个线程 {} 尝试获取锁", Thread.currentThread().getName());
+            log.info(ClassLayout.parseInstance(lock).toPrintable());
             synchronized (lock) {
-                log.info("即使无竞争，第二个线程 {} 获取锁，由于先前得到偏向锁的线程仍存活，=====> 轻量级锁", Thread.currentThread().getName());
+                log.info("第二个线程 {} 获取锁 =====> 轻量级锁", Thread.currentThread().getName());
                 log.info(ClassLayout.parseInstance(lock).toPrintable());
-
-                try {
-                    log.info("暂停 10s，可以使用 jstack 查看线程 tid 和 Mark Word 进行对比");
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }, "thread1");
         thread.start();

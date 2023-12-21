@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.openjdk.jol.info.ClassLayout;
 
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class BiasedLockingBaseTest {
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        Scanner scanner = new Scanner(System.in);
         log.info("偏向锁基础测试：匿名偏向锁 -> 偏向锁");
 
         log.info("sleep 4000ms，等待偏向锁激活");
@@ -20,11 +22,12 @@ public class BiasedLockingBaseTest {
         log.info(ClassLayout.parseInstance(lock).toPrintable());
 
         synchronized (lock) {
+            new Scanner(System.in).nextInt();
             log.info("{} 获取锁 =====> 偏向锁", Thread.currentThread().getName());
             log.info(ClassLayout.parseInstance(lock).toPrintable());
 
-            log.info("暂停 10s，可以使用 jstack 查看线程 tid 和 Mark Word 进行对比");
-            TimeUnit.SECONDS.sleep(10);
+            log.info("暂停，输入任意字符回车继续，可以使用 jstack 查看线程 tid 和 Mark Word 进行对比");
+            scanner.next();
         }
 
         log.info("偏向锁等到竞争出现才释放锁，因此离开同步方法块后，Mark Word 仍然不变");

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openjdk.jol.info.ClassLayout;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ThinLockingBaseTest {
@@ -21,7 +20,7 @@ public class ThinLockingBaseTest {
             log.info(ClassLayout.parseInstance(lock).toPrintable());
         }
 
-        log.info("离开同步块后，-> 无锁状态（可偏向的）");
+        log.info("离开同步块后轻量级锁释放 =====> 无锁状态（可偏向的）");
         log.info(ClassLayout.parseInstance(lock).toPrintable());
     }
 }

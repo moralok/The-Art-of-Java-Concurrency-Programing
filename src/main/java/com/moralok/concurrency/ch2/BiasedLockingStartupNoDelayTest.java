@@ -8,7 +8,7 @@ import java.io.IOException;
 @Slf4j
 public class BiasedLockingStartupNoDelayTest {
 
-    // 虚拟机参数设置为 -XX:BiasedLockingStartupDelay=0
+    // JVM 参数设置为 -XX:BiasedLockingStartupDelay=0
     public static void main(String[] args) throws IOException, InterruptedException {
         log.info("测试：关闭偏向锁的延迟偏向");
 

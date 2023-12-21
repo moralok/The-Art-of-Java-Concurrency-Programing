@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class BiasedLockingWhenPreviousBiasedThreadDeadTest {
+public class ThinLockingFromBiasedLockingWhenPreviousDeadTest {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         log.info("测试：之前获得偏向锁的线程已死时，新线程获得的仍然是偏向锁");
@@ -26,19 +26,25 @@ public class BiasedLockingWhenPreviousBiasedThreadDeadTest {
             }
         }, "thread1");
         thread1.start();
-        thread1.join();
 
         Thread thread2 = new Thread(() -> {
+            try {
+                thread1.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            boolean alive = thread1.isAlive();
+            log.info("第一个线程 {} 是否存活 {}", thread1.getName(), alive);
+            log.info(ClassLayout.parseInstance(lock).toPrintable());
             synchronized (lock) {
-                log.info("第二个线程 {} 获取锁，=====> 偏向锁", Thread.currentThread().getName());
-                log.info("震惊！！！为什么两个 tid 相同啊，有什么复用机制吗");
+                log.info("即使第一个线程已死亡，第二个线程 {} 获取锁 =====> 轻量级锁", Thread.currentThread().getName());
                 log.info(ClassLayout.parseInstance(lock).toPrintable());
             }
         }, "thread2");
         thread2.start();
         thread2.join();
 
-        log.info("偏向锁等到竞争出现才释放锁，因此离开同步方法块后，Mark Word 不变");
+        log.info("离开同步块后轻量级锁释放 =====> 无锁状态（可偏向的）");
         log.info(ClassLayout.parseInstance(lock).toPrintable());
     }
 }
