@@ -6,10 +6,10 @@ import org.openjdk.jol.info.ClassLayout;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class HashCodeInBiasedLockingTest {
+public class HashCodeInBiasedUnlockingTest {
 
     public static void main(String[] args) throws InterruptedException {
-        log.info("测试：在偏向锁状态加锁时计算 hashCode");
+        log.info("测试：在偏向锁状态无锁时计算 hashCode");
 
         log.info("sleep 4000ms，等待偏向锁激活");
         TimeUnit.MILLISECONDS.sleep(4000);
@@ -21,13 +21,10 @@ public class HashCodeInBiasedLockingTest {
         synchronized (lock) {
             log.info("获取锁 =====> 偏向锁");
             log.info(ClassLayout.parseInstance(lock).toPrintable());
-
-            int hashCode = lock.hashCode();
-            log.info("在计算 hashCode 后：Mark Word =====> 重量级锁");
-            log.info(ClassLayout.parseInstance(lock).toPrintable());
         }
 
-        log.info("即使离开同步块后 =====> 重量级锁");
+        int hashCode = lock.hashCode();
+        log.info("离开同步块后再计算 hashCode：Mark Word =====> 无锁状态");
         log.info(ClassLayout.parseInstance(lock).toPrintable());
     }
 }
